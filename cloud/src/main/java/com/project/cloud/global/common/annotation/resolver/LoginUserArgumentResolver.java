@@ -1,6 +1,6 @@
-package com.project.cloud.global.annotation.resolver;
+package com.project.cloud.global.common.annotation.resolver;
 
-import com.project.cloud.global.annotation.LoginUser;
+import com.project.cloud.global.common.annotation.LoginUser;
 import org.springframework.core.MethodParameter;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;

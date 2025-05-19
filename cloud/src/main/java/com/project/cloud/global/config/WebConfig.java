@@ -1,6 +1,6 @@
 package com.project.cloud.global.config;
 
-import com.project.cloud.global.annotation.resolver.LoginUserArgumentResolver;
+import com.project.cloud.global.common.annotation.resolver.LoginUserArgumentResolver;
 import java.util.List;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
