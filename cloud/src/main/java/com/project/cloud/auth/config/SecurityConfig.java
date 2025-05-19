@@ -14,6 +14,14 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @EnableWebSecurity
 public class SecurityConfig {
 
+    private final String[] allowedUrls = {
+            "/swagger-ui/**",
+            "/v3/api-docs/**",
+            "/",
+            "/oauth2/**",
+            "/login/**"
+    };
+
     private final AuthFacadeService oAuth2UserService;
     private final OAuth2LoginSuccessHandler successHandler;
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
@@ -30,7 +38,7 @@ public class SecurityConfig {
         http
             .csrf(csrf -> csrf.disable())
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/", "/oauth2/**", "/login/**").permitAll()
+                .requestMatchers(allowedUrls).permitAll()
                 .anyRequest().authenticated()
             )
             .oauth2Login(oauth2 -> oauth2
