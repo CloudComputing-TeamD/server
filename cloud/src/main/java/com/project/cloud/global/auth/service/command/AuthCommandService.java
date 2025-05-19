@@ -1,7 +1,7 @@
-package com.project.cloud.auth.service.command;
+package com.project.cloud.global.auth.service.command;
 
-import com.project.cloud.auth.domain.User;
-import com.project.cloud.auth.repository.UserRepository;
+import com.project.cloud.domain.user.entity.User;
+import com.project.cloud.domain.user.repository.UserRepository;
 import java.util.Optional;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

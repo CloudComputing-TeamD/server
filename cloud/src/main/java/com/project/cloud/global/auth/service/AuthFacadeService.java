@@ -1,6 +1,6 @@
-package com.project.cloud.auth.service;
+package com.project.cloud.global.auth.service;
 
-import com.project.cloud.auth.service.command.AuthCommandService;
+import com.project.cloud.global.auth.service.command.AuthCommandService;
 import java.util.Map;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
