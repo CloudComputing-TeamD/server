@@ -1,6 +1,6 @@
-package com.project.cloud.auth.controller;
+package com.project.cloud.global.auth.controller;
 
-import com.project.cloud.auth.annotaion.LoginUser;
+import com.project.cloud.global.common.annotation.LoginUser;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;

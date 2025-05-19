@@ -1,8 +1,8 @@
-package com.project.cloud.auth.config;
+package com.project.cloud.global.config;
 
-import com.project.cloud.auth.infrastructure.JwtAuthenticationFilter;
-import com.project.cloud.auth.infrastructure.OAuth2LoginSuccessHandler;
-import com.project.cloud.auth.service.AuthFacadeService;
+import com.project.cloud.global.auth.infra.JwtAuthenticationFilter;
+import com.project.cloud.global.auth.infra.OAuth2LoginSuccessHandler;
+import com.project.cloud.global.auth.service.AuthFacadeService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -13,6 +13,14 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
+
+    private final String[] allowedUrls = {
+            "/swagger-ui/**",
+            "/v3/api-docs/**",
+            "/",
+            "/oauth2/**",
+            "/login/**"
+    };
 
     private final AuthFacadeService oAuth2UserService;
     private final OAuth2LoginSuccessHandler successHandler;
@@ -30,7 +38,7 @@ public class SecurityConfig {
         http
             .csrf(csrf -> csrf.disable())
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/", "/oauth2/**", "/login/**").permitAll()
+                .requestMatchers(allowedUrls).permitAll()
                 .anyRequest().authenticated()
             )
             .oauth2Login(oauth2 -> oauth2

@@ -1,4 +1,4 @@
-package com.project.cloud.auth.util;
+package com.project.cloud.global.auth.util;
 
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;

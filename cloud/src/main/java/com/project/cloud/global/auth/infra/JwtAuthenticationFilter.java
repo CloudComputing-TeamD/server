@@ -1,6 +1,6 @@
-package com.project.cloud.auth.infrastructure;
+package com.project.cloud.global.auth.infra;
 
-import com.project.cloud.auth.util.JwtParser;
+import com.project.cloud.global.auth.util.JwtParser;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
