@@ -1,6 +1,6 @@
 package com.project.cloud.domain.bodyPart.entity;
 
-import com.project.cloud.domain.userbodypart.entity.UserBodyPart;
+import com.project.cloud.domain.userBodyPart.entity.UserBodyPart;
 import jakarta.persistence.*;
 import lombok.*;
 
