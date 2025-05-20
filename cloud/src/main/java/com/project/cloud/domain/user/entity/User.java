@@ -8,6 +8,8 @@ import com.project.cloud.domain.user.enumerate.Goal;
 import com.project.cloud.domain.user.enumerate.WorkoutLevel;
 import com.project.cloud.domain.userBodyPart.entity.UserBodyPart;
 import com.project.cloud.global.common.BaseEntity;
+import com.project.cloud.global.exception.CustomException;
+import com.project.cloud.global.exception.ErrorCode;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -18,9 +20,7 @@ import java.util.List;
 @Entity
 @Table(name = "USERS")
 @Getter
-@Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class User extends BaseEntity {
 
     @Id
@@ -76,41 +76,18 @@ public class User extends BaseEntity {
 
 
     public User(String email, String name) {
+        if (email == null || email.isBlank()) {
+            throw new CustomException(ErrorCode.USER_NOT_EXIST);
+        }
+        if (name == null || name.isBlank()) {
+            throw new CustomException(ErrorCode.USER_NOT_EXIST);
+        }
         this.email = email;
         this.name = name;
     }
 
-    public static User create(String email,
-                              Gender gender,
-                              Integer height,
-                              Integer weight,
-                              LocalDate birthDate,
-                              Goal goal,
-                              Frequency frequency,
-                              WorkoutLevel workoutLevel) {
-        return User.builder()
-                .email(email)
-                .gender(gender)
-                .height(height)
-                .weight(weight)
-                .birthDate(birthDate)
-                .goal(goal)
-                .frequency(frequency)
-                .workoutLevel(workoutLevel)
-                .build();
+    public static User create(String email, String name) {
+        return new User(email, name);
     }
 
-    public void updateProfile(Integer height,
-                              Integer weight,
-                              LocalDate birthDate,
-                              Goal goal,
-                              Frequency frequency,
-                              WorkoutLevel workoutLevel) {
-        this.height = height;
-        this.weight = weight;
-        this.birthDate = birthDate;
-        this.goal = goal;
-        this.frequency = frequency;
-        this.workoutLevel = workoutLevel;
-    }
 }

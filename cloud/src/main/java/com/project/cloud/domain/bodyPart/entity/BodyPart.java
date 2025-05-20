@@ -1,14 +1,14 @@
 package com.project.cloud.domain.bodyPart.entity;
 
+import com.project.cloud.global.exception.CustomException;
+import com.project.cloud.global.exception.ErrorCode;
 import jakarta.persistence.*;
 import lombok.*;
 
 @Entity
 @Table(name = "BODY_PART")
 @Getter
-@Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class BodyPart {
 
     @Id
@@ -19,9 +19,14 @@ public class BodyPart {
     @Column(name = "NAME", nullable = false, length = 50)
     private String name;
 
+    private BodyPart(String name) {
+        if (name == null || name.isBlank()) {
+            throw new CustomException(ErrorCode.BODYPART_NAME_EMPTY);
+        }
+        this.name = name;
+    }
+
     public static BodyPart create(String name) {
-        return BodyPart.builder()
-                .name(name)
-                .build();
+        return new BodyPart(name);
     }
 }
