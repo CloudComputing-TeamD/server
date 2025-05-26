@@ -10,12 +10,22 @@ import com.project.cloud.domain.userBodyPart.entity.UserBodyPart;
 import com.project.cloud.global.common.BaseEntity;
 import com.project.cloud.global.exception.CustomException;
 import com.project.cloud.global.exception.ErrorCode;
-import jakarta.persistence.*;
-import lombok.*;
-
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Table(name = "USERS")
@@ -90,4 +100,25 @@ public class User extends BaseEntity {
         return new User(email, name);
     }
 
+    public void updateInfo(
+        Gender gender,
+        Integer height,
+        Integer weight,
+        LocalDate birthDate,
+        Goal goal,
+        Frequency frequency,
+        WorkoutLevel workoutLevel,
+        List<UserBodyPart> newBodyParts
+    ) {
+        this.gender = gender;
+        this.height = height;
+        this.weight = weight;
+        this.birthDate = birthDate;
+        this.goal = goal;
+        this.frequency = frequency;
+        this.workoutLevel = workoutLevel;
+
+        this.bodyPartStats.clear();
+        this.bodyPartStats.addAll(newBodyParts);
+    }
 }
