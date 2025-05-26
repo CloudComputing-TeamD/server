@@ -27,9 +27,9 @@ jobs:
       # application.yaml 생성
       - name: Create application.yaml
         run: |
-          mkdir -p src/main/resources
-          echo "${{ secrets.APPLICATION_YAML }}" > src/main/resources/application.yaml
-          echo "${{ secrets.APPLICATION_DEV_YAML }}" > src/main/resources/application-dev.yaml
+          mkdir -p cloud/src/main/resources
+          echo "${{ secrets.APPLICATION_YAML }}" > cloud/src/main/resources/application.yaml
+          echo "${{ secrets.APPLICATION_DEV_YAML }}" > cloud/src/main/resources/application-dev.yaml
 
       # Gradle 빌드
       - name: Build with Gradle
