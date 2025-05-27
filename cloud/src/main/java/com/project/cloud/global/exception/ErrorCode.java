@@ -80,6 +80,7 @@ public enum ErrorCode {
     // BodyPart (신체 부위)
     BODYPART_NAME_EMPTY("BODYPART400", "신체 부위 이름은 비어 있을 수 없습니다.", HttpStatus.BAD_REQUEST),
     BODYPART_REQUIRED("BODYPART402", "BODYPART는 반드시 필요합니다.", HttpStatus.BAD_REQUEST),
+    BODYPART_NOT_FOUND("BODYPART404", "해당 BODYPART를 찾을 수 없습니다.", HttpStatus.BAD_REQUEST),
 
     // Exercise (운동)
     EXERCISE_NAME_EMPTY("EXERCISE400", "운동 이름은 비어 있을 수 없습니다.", HttpStatus.BAD_REQUEST),
