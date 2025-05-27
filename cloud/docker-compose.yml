@@ -1,0 +1,10 @@
+version: "3.8"
+
+services:
+  backend:
+    image: jaehyuun/fit4u-backend:latest
+    container_name: app
+    ports:
+      - "8080:8080"
+    environment:
+      - SPRING_PROFILES_ACTIVE=dev
