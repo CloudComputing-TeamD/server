@@ -1,10 +1,12 @@
 package com.project.cloud.domain.user.controller;
 
 import com.project.cloud.domain.user.dto.UserCharacterResponse;
+import com.project.cloud.domain.user.dto.UserExerciseStatisticsResponse;
 import com.project.cloud.domain.user.dto.UserInfoUpdateRequest;
 import com.project.cloud.domain.user.dto.UserSignupInfoRequest;
 import com.project.cloud.domain.user.service.UserService;
 import com.project.cloud.global.common.annotation.LoginUser;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -35,8 +37,14 @@ public class UserController {
         return ResponseEntity.ok().build();
     }
 
-    @GetMapping("/profile/chracter")
+    @GetMapping("/profile/character")
     public ResponseEntity<UserCharacterResponse> userCharacterInfo(@LoginUser String email) {
         return ResponseEntity.ok(userService.getUserCharacterInfo(email));
     }
+
+    @GetMapping("/statics")
+    public ResponseEntity<UserExerciseStatisticsResponse> userExerciseStatistics(@LoginUser String email){
+        return ResponseEntity.ok(userService.getUserStatistics(email));
+    }
+
 }

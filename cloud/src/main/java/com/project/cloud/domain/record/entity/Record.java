@@ -29,6 +29,7 @@ public class Record {
     @Column(name = "TOTAL_TIME", nullable = false)
     private Integer totalTime;
 
+
     public Record(User user, LocalDate date, Integer totalTime) {
         if (user == null) {
             throw new CustomException(ErrorCode.USER_REQUIRED);
