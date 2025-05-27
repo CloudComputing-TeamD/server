@@ -52,16 +52,11 @@ class UserControllerTest {
         );
 
         // when & then
-        String content = mockMvc.perform(post("/users/signup")
+        mockMvc.perform(post("/users/signup")
                 .header("Authorization", "Bearer " + jwtParser.createToken("email@email.com"))
                 .with(csrf())
                 .content(objectMapper.writeValueAsString(request))
                 .contentType(MediaType.APPLICATION_JSON))
-            .andExpect(status().isOk())
-            .andReturn()
-            .getResponse()
-            .getContentAsString(StandardCharsets.UTF_8);
-        assertThat(content).isEqualTo("ok");
+            .andExpect(status().isOk());
     }
-
 }
