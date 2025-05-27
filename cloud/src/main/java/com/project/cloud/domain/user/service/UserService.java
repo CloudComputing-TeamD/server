@@ -2,17 +2,16 @@ package com.project.cloud.domain.user.service;
 
 import com.project.cloud.domain.bodyPart.entity.BodyPart;
 import com.project.cloud.domain.bodyPart.repository.BodyPartRepository;
-import com.project.cloud.domain.user.dto.UserInfoRequest;
+import com.project.cloud.domain.user.dto.BodyPartExpResponse;
+import com.project.cloud.domain.user.dto.UserCharacterResponse;
+import com.project.cloud.domain.user.dto.UserInfoUpdateRequest;
+import com.project.cloud.domain.user.dto.UserSignupInfoRequest;
 import com.project.cloud.domain.user.entity.User;
 import com.project.cloud.domain.user.enumerate.Frequency;
-import com.project.cloud.domain.user.enumerate.Gender;
-import com.project.cloud.domain.user.enumerate.Goal;
-import com.project.cloud.domain.user.enumerate.WorkoutLevel;
 import com.project.cloud.domain.user.repository.UserRepository;
 import com.project.cloud.domain.userBodyPart.entity.UserBodyPart;
 import com.project.cloud.global.exception.CustomException;
 import com.project.cloud.global.exception.ErrorCode;
-import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
@@ -27,21 +26,33 @@ public class UserService {
     private final UserRepository userRepository;
     private final BodyPartRepository bodyPartRepository;
 
-    public void saveSignupUserInfo(UserInfoRequest userInfoRequest, String email) {
-        User user = userRepository.findByEmail(email).orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_EXIST));
-        updateUser(user, userInfoRequest);
+    public void saveSignupUserInfo(UserSignupInfoRequest userSignupInfoRequest, String email) {
+        User user = findUserByEmail(email);
+        updateUser(user, userSignupInfoRequest);
     }
 
-    private void updateUser(User user, UserInfoRequest request) {
-        Gender gender = request.gender();
-        Integer height = request.height();
-        Integer weight = request.weight();
-        LocalDate birthDate = request.birthDate();
-        Goal goal = Goal.valueOf(request.goal().toUpperCase());
-        Frequency frequency = Frequency.fromCount(request.frequency());
-        WorkoutLevel workoutLevel = request.workoutLevel();
+    private User findUserByEmail(String email) {
+        return userRepository.findByEmail(email).orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_EXIST));
+    }
 
-        List<UserBodyPart> parts = request.targetParts().stream()
+    private void updateUser(User user, UserSignupInfoRequest request) {
+        List<UserBodyPart> parts = getUserBodyParts(user, request);
+
+        user.updateInfo(
+            request.gender(),
+            request.height(),
+            request.weight(),
+            request.birthDate(),
+            request.goal(),
+            Frequency.fromCount(request.frequency()),
+            request.workoutLevel()
+        );
+
+        user.updateBodyParts(parts);
+    }
+
+    private List<UserBodyPart> getUserBodyParts(User user, UserSignupInfoRequest request) {
+        return request.targetParts().stream()
             .map(partName -> {
                 Optional<BodyPart> bodyPart = bodyPartRepository.findByName(partName);
                 if (bodyPart.isPresent()) {
@@ -50,7 +61,47 @@ public class UserService {
                 throw new CustomException(ErrorCode.BODYPART_NOT_FOUND);
             })
             .toList();
+    }
 
-        user.updateInfo(gender, height, weight, birthDate, goal, frequency, workoutLevel, parts);
+    public void updateUserInfo(UserInfoUpdateRequest userInfoUpdateRequest, String email) {
+        User user = findUserByEmail(email);
+        user.updateInfo(
+            userInfoUpdateRequest.gender(),
+            userInfoUpdateRequest.height(),
+            userInfoUpdateRequest.weight(),
+            userInfoUpdateRequest.birthDate(),
+            userInfoUpdateRequest.goal(),
+            userInfoUpdateRequest.frequency(),
+            userInfoUpdateRequest.workoutLevel()
+        );
+    }
+
+    // TODO : 이미지 저장
+    public UserCharacterResponse getUserCharacterInfo(String email) {
+        User user = findUserByEmail(email);
+        return new UserCharacterResponse(user.getLevel(), user.getExp(), "image.url",
+            makeBodyPartResponse(user.getBodyPartStats()));
+    }
+
+    // TODO : bodyPart Enum 작성 필요
+    private BodyPartExpResponse makeBodyPartResponse(List<UserBodyPart> bodyParts) {
+        return new BodyPartExpResponse(
+            findBodyPartExpByName(bodyParts, "chest"),
+            findBodyPartExpByName(bodyParts, "back"),
+            findBodyPartExpByName(bodyParts, "legs"),
+            findBodyPartExpByName(bodyParts, "abs"),
+            findBodyPartExpByName(bodyParts, "shoulders")
+        );
+    }
+
+    // TODO : N+1 없애기
+    private int findBodyPartExpByName(List<UserBodyPart> bodyParts, String partName) {
+        Optional<UserBodyPart> part = bodyParts.stream()
+            .filter(userBodyPart -> userBodyPart.getBodyPart().getName().equals(partName))
+            .findFirst();
+        if (part.isEmpty()) {
+            throw new CustomException(ErrorCode.BODYPART_NOT_FOUND);
+        }
+        return part.get().getExp();
     }
 }

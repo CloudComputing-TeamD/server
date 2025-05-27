@@ -6,9 +6,10 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.project.cloud.domain.user.enumerate.Goal;
 import com.project.cloud.global.auth.util.JwtParser;
 import com.project.cloud.support.CustomMvcTest;
-import com.project.cloud.domain.user.dto.UserInfoRequest;
+import com.project.cloud.domain.user.dto.UserSignupInfoRequest;
 import com.project.cloud.domain.user.enumerate.Gender;
 import com.project.cloud.domain.user.enumerate.WorkoutLevel;
 import java.nio.charset.StandardCharsets;
@@ -19,7 +20,6 @@ import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator.ReplaceUnderscores;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
-import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 
 @DisplayNameGeneration(ReplaceUnderscores.class)
@@ -39,13 +39,13 @@ class UserControllerTest {
     @Test
     void 유저_정보_입력() throws Exception {
         // given
-        UserInfoRequest request = new UserInfoRequest(
+        UserSignupInfoRequest request = new UserSignupInfoRequest(
             "email@email.com",
             Gender.FEMALE,
             160,
             50,
             LocalDate.now(),
-            "목표",
+            Goal.GAIN_MUSCLE,
             List.of("복부", "등"),
             3,
             WorkoutLevel.ADVANCED

@@ -107,8 +107,7 @@ public class User extends BaseEntity {
         LocalDate birthDate,
         Goal goal,
         Frequency frequency,
-        WorkoutLevel workoutLevel,
-        List<UserBodyPart> newBodyParts
+        WorkoutLevel workoutLevel
     ) {
         this.gender = gender;
         this.height = height;
@@ -117,8 +116,10 @@ public class User extends BaseEntity {
         this.goal = goal;
         this.frequency = frequency;
         this.workoutLevel = workoutLevel;
+    }
 
+    public void updateBodyParts(List<UserBodyPart> parts) {
         this.bodyPartStats.clear();
-        this.bodyPartStats.addAll(newBodyParts);
+        this.bodyPartStats.addAll(parts);
     }
 }

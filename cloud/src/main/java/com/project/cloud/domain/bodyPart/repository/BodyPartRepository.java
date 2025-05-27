@@ -8,5 +8,5 @@ public interface BodyPartRepository extends Repository<BodyPart, Long> {
 
     Optional<BodyPart> findByName(String name);
 
-    void save(BodyPart bodyPart);
+    BodyPart save(BodyPart bodyPart);
 }
