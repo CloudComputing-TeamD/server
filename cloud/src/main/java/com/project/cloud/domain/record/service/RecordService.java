@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Optional;
 
 
@@ -59,6 +60,27 @@ public class RecordService {
                 record.getTotalTime()
         );
     }
+
+    @Transactional(readOnly= true)
+    public List<RecordResponse> getRecordsByDate(String email, LocalDate date) {
+        User user = findUserByEmail(email);
+        List<Record> records = recordRepository.findAllByUserAndDate(user, date);
+        return records.stream()
+                .map(this::toRecordResponse)
+                .toList();
+    }
+
+
+    private RecordResponse toRecordResponse(Record record) {
+        return new RecordResponse(
+                record.getId(),
+                record.getRoutine().getId(),
+                record.getRoutine().getName(),
+                record.getDate(),
+                record.getTotalTime()
+        );
+    }
+
 
     private User findUserByEmail(String email) {
         return userRepository.findByEmail(email).orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_EXIST));
