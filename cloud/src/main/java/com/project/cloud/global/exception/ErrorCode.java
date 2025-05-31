@@ -84,6 +84,7 @@ public enum ErrorCode {
 
     // Exercise (운동)
     EXERCISE_NAME_EMPTY("EXERCISE400", "운동 이름은 비어 있을 수 없습니다.", HttpStatus.BAD_REQUEST),
+    EXERCISE_NOT_FOUND("EXERCISE404", "해당 운동을 찾을 수 없습니다.", HttpStatus.NOT_FOUND),
 
     // Record (기록)
     RECORD_DATE_REQUIRED("RECORD401", "기록 생성 시 날짜 정보가 필요합니다.",  HttpStatus.BAD_REQUEST),
