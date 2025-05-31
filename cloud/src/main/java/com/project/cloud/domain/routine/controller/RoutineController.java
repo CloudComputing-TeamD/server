@@ -4,6 +4,7 @@ import com.project.cloud.domain.routine.dto.request.RoutineRequest;
 import com.project.cloud.domain.routine.dto.response.RoutineDetailResponse;
 import com.project.cloud.domain.routine.dto.response.RoutineResponse;
 import com.project.cloud.domain.routine.service.RoutineService;
+import com.project.cloud.domain.routine.service.RoutineRecommendService;
 import com.project.cloud.global.common.annotation.LoginUser;
 import com.project.cloud.global.response.SuccessResponse;
 import lombok.RequiredArgsConstructor;
@@ -17,6 +18,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class RoutineController {
     private final RoutineService routineService;
+    private final RoutineRecommendService routineRecommendService;
 
     @PostMapping
     public SuccessResponse<RoutineResponse> createRoutine(@RequestBody RoutineRequest request, @LoginUser String email){
@@ -56,5 +58,12 @@ public class RoutineController {
 
         List<RoutineDetailResponse> responses = routineService.getAllRoutines(email);
         return SuccessResponse.ok(responses);
+    }
+
+    @PostMapping("/recommend")
+    public SuccessResponse<RoutineResponse> recommendRoutine(@LoginUser String email) {
+
+        RoutineResponse response= routineRecommendService.recommendAndSaveRoutine(email);
+        return SuccessResponse.ok(response);
     }
 }
