@@ -56,10 +56,15 @@ public class Record {
         this.totalTime = totalTime;
     }
 
-    public static Record create(User user, LocalDate date, int totalTime) {
-        return new Record(user, date, totalTime);
     public static Record create(User user, Routine routine, LocalDate date, int totalTime) {
+        return new Record(user, routine, date, totalTime);
 
     }
+
+    public void updateTotalTime(int updatedTime) {
+        if (updatedTime <= 0) {
+            throw new CustomException(ErrorCode.RECORD_TOTALTIME_INVALID);
+        }
+        this.totalTime = updatedTime;
     }
 }
