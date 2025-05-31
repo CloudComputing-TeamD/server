@@ -26,10 +26,6 @@ public class RoutineService {
     private final ExerciseRepository exerciseRepository;
     private final UserRepository userRepository;
 
-    private User findUserByEmail(String email) {
-        return userRepository.findByEmail(email).orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_EXIST));
-    }
-
     @Transactional
     public RoutineResponse createRoutine(RoutineRequest request, String email){
         User user = findUserByEmail(email);
@@ -59,6 +55,53 @@ public class RoutineService {
         routineRepository.save(routine);
         return toRoutineResponse(routine);
     }
+
+    @Transactional
+    public RoutineResponse updateRoutine(Long routineId, RoutineRequest request, String email) {
+        User user = findUserByEmail(email);
+        Routine routine = routineRepository.findById(routineId)
+                .orElseThrow(() -> new CustomException(ErrorCode.ROUTINE_NOT_FOUND));
+
+        if (!routine.getUser().getId().equals(user.getId())) {
+            throw new CustomException(ErrorCode.ROUTINE_FORBIDDEN);
+        }
+
+        routine.updateName(request.getName());
+        routine.getItems().clear();
+
+        Set<Long> exerciseIdSet = new HashSet<>();
+        for (RoutineRequest.RoutineItemDto dto : request.getRoutineItems()) {
+            if (!exerciseIdSet.add(dto.getExerciseId())) {
+                throw new CustomException(ErrorCode.ROUTINE_ITEM_DUPLICATE);
+            }
+
+            Exercise exercise = exerciseRepository.findById(dto.getExerciseId())
+                    .orElseThrow(() -> new CustomException(ErrorCode.EXERCISE_NOT_FOUND));
+
+            RoutineItem item = RoutineItem.create(routine, exercise, dto.getSets(), dto.getReps(), dto.getWeight(), dto.getOrder());
+            routine.addItem(item);
+        }
+        return toRoutineResponse(routine);
+    }
+
+    @Transactional
+    public void deleteRoutine(Long routineId, String email) {
+        User user = findUserByEmail(email);
+        Routine routine = routineRepository.findById(routineId)
+                .orElseThrow(() -> new CustomException(ErrorCode.ROUTINE_NOT_FOUND));
+
+        if (!routine.getUser().getId().equals(user.getId())) {
+            throw new CustomException(ErrorCode.ROUTINE_FORBIDDEN);
+        }
+
+        routineRepository.delete(routine);
+    }
+
+
+    private User findUserByEmail(String email) {
+        return userRepository.findByEmail(email).orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_EXIST));
+    }
+
 
     private RoutineResponse toRoutineResponse(Routine routine) {
         List<RoutineResponse.RoutineItemDto> items = routine.getItems().stream()

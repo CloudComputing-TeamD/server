@@ -20,4 +20,21 @@ public class RoutineController {
         RoutineResponse response = routineService.createRoutine(request,email);
         return SuccessResponse.ok(response);
     }
-}
+    @PutMapping("/{routineId}")
+    public SuccessResponse<RoutineResponse> updateRoutine(
+            @PathVariable Long routineId,
+            @RequestBody RoutineRequest request,
+            @LoginUser String email) {
+
+        RoutineResponse response = routineService.updateRoutine(routineId, request, email);
+        return SuccessResponse.ok(response);
+    }
+
+    @DeleteMapping("/{routineId}")
+    public SuccessResponse<Void> deleteRoutine(
+            @PathVariable Long routineId,
+            @LoginUser String email) {
+
+        routineService.deleteRoutine(routineId, email);
+        return SuccessResponse.ok(null);
+    }}
