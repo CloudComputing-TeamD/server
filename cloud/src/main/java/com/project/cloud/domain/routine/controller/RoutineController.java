@@ -1,12 +1,15 @@
 package com.project.cloud.domain.routine.controller;
 
 import com.project.cloud.domain.routine.dto.request.RoutineRequest;
+import com.project.cloud.domain.routine.dto.response.RoutineDetailResponse;
 import com.project.cloud.domain.routine.dto.response.RoutineResponse;
 import com.project.cloud.domain.routine.service.RoutineService;
 import com.project.cloud.global.common.annotation.LoginUser;
 import com.project.cloud.global.response.SuccessResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 
 @RestController
@@ -37,4 +40,21 @@ public class RoutineController {
 
         routineService.deleteRoutine(routineId, email);
         return SuccessResponse.ok(null);
-    }}
+    }
+    @GetMapping("/{routineId}")
+    public SuccessResponse<RoutineDetailResponse> getRoutine(
+            @PathVariable Long routineId,
+            @LoginUser String email) {
+
+        RoutineDetailResponse response = routineService.getRoutine(routineId, email);
+        return SuccessResponse.ok(response);
+    }
+
+    @GetMapping
+    public SuccessResponse<List<RoutineDetailResponse>> getAllRoutines(
+            @LoginUser String email) {
+
+        List<RoutineDetailResponse> responses = routineService.getAllRoutines(email);
+        return SuccessResponse.ok(responses);
+    }
+}

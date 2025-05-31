@@ -3,6 +3,7 @@ package com.project.cloud.domain.routine.service;
 import com.project.cloud.domain.exercise.entity.Exercise;
 import com.project.cloud.domain.exercise.repository.ExerciseRepository;
 import com.project.cloud.domain.routine.dto.request.RoutineRequest;
+import com.project.cloud.domain.routine.dto.response.RoutineDetailResponse;
 import com.project.cloud.domain.routine.dto.response.RoutineResponse;
 import com.project.cloud.domain.routine.entity.Routine;
 import com.project.cloud.domain.routine.repository.RoutineRepository;
@@ -27,19 +28,19 @@ public class RoutineService {
     private final UserRepository userRepository;
 
     @Transactional
-    public RoutineResponse createRoutine(RoutineRequest request, String email){
+    public RoutineResponse createRoutine(RoutineRequest request, String email) {
         User user = findUserByEmail(email);
 
         boolean exists = routineRepository.existsByUserAndName(user, request.getName());
-        if (exists){
+        if (exists) {
             throw new CustomException(ErrorCode.ROUTINE_DUPLICATE_NAME);
         }
 
-        Routine routine = Routine.create(user,request.getName());
+        Routine routine = Routine.create(user, request.getName());
 
         Set<Long> exerciseIdSet = new HashSet<>();
 
-        for (RoutineRequest.RoutineItemDto dto : request.getRoutineItems()){
+        for (RoutineRequest.RoutineItemDto dto : request.getRoutineItems()) {
             Long exerciseId = dto.getExerciseId();
 
             if (!exerciseIdSet.add(exerciseId)) {
@@ -47,9 +48,9 @@ public class RoutineService {
             }
 
             Exercise exercise = exerciseRepository.findById(dto.getExerciseId())
-                    .orElseThrow(()-> new CustomException(ErrorCode.EXERCISE_NOT_FOUND));
+                    .orElseThrow(() -> new CustomException(ErrorCode.EXERCISE_NOT_FOUND));
 
-            RoutineItem item = RoutineItem.create(routine,exercise,dto.getSets(),dto.getReps(), dto.getWeight(), dto.getOrder());
+            RoutineItem item = RoutineItem.create(routine, exercise, dto.getSets(), dto.getReps(), dto.getWeight(), dto.getOrder());
             routine.addItem(item);
         }
         routineRepository.save(routine);
@@ -97,6 +98,28 @@ public class RoutineService {
         routineRepository.delete(routine);
     }
 
+    @Transactional
+    public RoutineDetailResponse getRoutine(Long routineId, String email) {
+        User user = findUserByEmail(email);
+        Routine routine = routineRepository.findById(routineId)
+                .orElseThrow(() -> new CustomException(ErrorCode.ROUTINE_NOT_FOUND));
+
+        if (!routine.getUser().getId().equals(user.getId())) {
+            throw new CustomException(ErrorCode.ROUTINE_FORBIDDEN);
+        }
+
+        return toRoutineDetailResponse(routine);
+    }
+
+    @Transactional
+    public List<RoutineDetailResponse> getAllRoutines(String email) {
+        User user = findUserByEmail(email);
+        List<Routine> routines = routineRepository.findByUser(user);
+        return routines.stream()
+                .map(this::toRoutineDetailResponse)
+                .toList();
+    }
+
 
     private User findUserByEmail(String email) {
         return userRepository.findByEmail(email).orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_EXIST));
@@ -118,6 +141,20 @@ public class RoutineService {
         return new RoutineResponse(routine.getId(), routine.getName(), items);
     }
 
-
-
+    private RoutineDetailResponse toRoutineDetailResponse(Routine routine) {
+        List<RoutineDetailResponse.RoutineItemDetailDto> items = routine.getItems().stream()
+                .map(item -> new RoutineDetailResponse.RoutineItemDetailDto(
+                        item.getExercise().getId(),
+                        item.getExercise().getName(),
+                        item.getExercise().getTarget().name(),
+                        item.getExercise().getLink(),
+                        item.getExercise().getImage(),
+                        item.getSetCount(),
+                        item.getRepeatCount(),
+                        item.getWeight(),
+                        item.getOrderNo()
+                ))
+                .toList();
+        return new RoutineDetailResponse(routine.getName(), routine.getCreatedAt(), items);
+    }
 }
