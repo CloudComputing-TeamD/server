@@ -20,7 +20,8 @@ public class SwaggerConfig {
     public OpenAPI openAPI() {
         return new OpenAPI()
                 .servers(List.of(
-                        new Server().url("http://localhost:8080").description("Local Server")
+                        new Server().url("http://localhost:8080").description("Local Server"),
+                        new Server().url("https://fit4u.xyz").description("Deployed Server")
                 ))
                 .components(components())
                 .info(apiInfo())
