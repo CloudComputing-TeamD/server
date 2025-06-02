@@ -63,6 +63,8 @@ public enum ErrorCode {
     ROUTINE_DUPLICATE_NAME("ROUTINE401", "이미 같은 이름의 루틴이 존재합니다.", HttpStatus.BAD_REQUEST),
     ROUTINE_NOT_FOUND("ROUTINE404", "해당 루틴을 찾을 수 없습니다.", HttpStatus.NOT_FOUND),
     ROUTINE_FORBIDDEN("ROUTINE403", "해당 루틴에 대한 접근 권한이 없습니다.", HttpStatus.FORBIDDEN),
+    ROUTINE_REQUIRED("ROUTINE405","Routine은 반드시 필요합니다." ,HttpStatus.BAD_REQUEST ),
+    ROUTINE_RECOMMEND_FAILED("ROUTINE406","AI 루틴 추천이 실패하였습니다", HttpStatus.BAD_REQUEST),
 
     // RoutineItem (루틴 항목)
     ROUTINE_ITEM_NOT_FOUND("ROUTINEITEM404", "해당 루틴 항목을 찾을 수 없습니다.", HttpStatus.NOT_FOUND),
