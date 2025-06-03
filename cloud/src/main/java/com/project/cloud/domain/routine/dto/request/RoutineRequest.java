@@ -6,15 +6,28 @@ import java.util.List;
 
 @Getter
 public class RoutineRequest {
-    private String name;
-    private List<RoutineItemDto> routineItems;
+    private final String name;
+    private final List<RoutineItemDto> routineItems;
+
+    public RoutineRequest(String name, List<RoutineItemDto> routineItems) {
+        this.name = name;
+        this.routineItems = routineItems;
+    }
 
     @Getter
     public static class RoutineItemDto{
-        private Long exerciseId;
-        private Integer sets;
-        private Integer reps;
-        private Integer weight;
-        private Integer order;
+        private final Long exerciseId;
+        private final Integer sets;
+        private final Integer reps;
+        private final Integer weight;
+        private final Integer order;
+
+        public RoutineItemDto(Long exerciseId, Integer sets, Integer reps, Integer weight, Integer order) {
+            this.exerciseId = exerciseId;
+            this.sets = sets;
+            this.reps = reps;
+            this.weight = weight;
+            this.order = order;
+        }
     }
 }
