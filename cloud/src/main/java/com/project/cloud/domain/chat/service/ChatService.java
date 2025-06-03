@@ -5,9 +5,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.project.cloud.domain.chat.dto.ChatRequest;
 import com.project.cloud.domain.chat.dto.ChatResponse;
 import com.project.cloud.domain.routine.dto.request.RoutineRequest;
+import com.project.cloud.domain.routine.dto.response.RoutineResponse;
+import com.project.cloud.domain.routine.service.RoutineService;
 import com.project.cloud.domain.user.entity.User;
 import com.project.cloud.domain.user.repository.UserRepository;
-import com.project.cloud.domain.user.service.UserService;
 import com.project.cloud.global.exception.CustomException;
 import com.project.cloud.global.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
@@ -24,15 +25,16 @@ import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
-@Transactional(readOnly = true)
 public class ChatService {
 
     private final ObjectMapper objectMapper;
     private final RestTemplate restTemplate;
     private final UserRepository userRepository;
+    private final RoutineService routineService;
 
     @Value("${ai.chatbot-url}") private String chatbotUrl;
 
+    @Transactional
     public ChatResponse.Chat askChatBot(ChatRequest.Chat request) {
 
         User user = userRepository.findByEmail(request.email()).orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_EXIST));
@@ -72,8 +74,7 @@ public class ChatService {
             );
         } catch (Exception e) {
             // 네트워크 오류 등, 챗봇 서버 요청 실패 시
-            ChatResponse.Qa errorQa = new ChatResponse.Qa("error", null, "챗봇 서버 요청 실패: " + e.getMessage());
-            return ChatResponse.Chat.from("error", errorQa, null);
+            return ChatResponse.Chat.from("error", "챗봇 서버 요청 실패: " + e.getMessage(), null);
         }
 
         String responseJson = respEntity.getBody();
@@ -87,13 +88,11 @@ public class ChatService {
                 String question = root.path("question").asText(null);
                 String answer   = root.path("answer").asText(null);
 
-                ChatResponse.Qa qa = new ChatResponse.Qa(type, question, answer);
-                return ChatResponse.Chat.from(type, qa, null);
+                return ChatResponse.Chat.from(type, answer, null);
             }
             else if ("routine".equals(type)) {
                 List<String> preferredParts = new ArrayList<>();
-                root.path("preferred_parts")
-                        .forEach(node -> preferredParts.add(node.asText()));
+                root.path("preferred_parts").forEach(node -> preferredParts.add(node.asText()));
 
                 String level              = root.path("level").asText(null);
                 String goal               = root.path("goal").asText(null);
@@ -118,24 +117,15 @@ public class ChatService {
                 // RoutineRequest 생성
                 RoutineRequest rr = new RoutineRequest(routineName, items);
 
-                ChatResponse.Routine routine = new ChatResponse.Routine(
-                        type,
-                        preferredParts,
-                        level,
-                        goal,
-                        frequencyPerWeek,
-                        rr
-                );
-                return ChatResponse.Chat.from(type, null, routine);
+                RoutineResponse saved = routineService.createRoutine(rr, user.getEmail());
+                return ChatResponse.Chat.from(type, null, saved.getRoutineId());
             }
             else {
-                ChatResponse.Qa errorQa = new ChatResponse.Qa("error", null, "알 수 없는 응답 형식(type=" + type + ")");
-                return ChatResponse.Chat.from("error", errorQa, null);
+                return ChatResponse.Chat.from("error", "알 수 없는 응답 형식(type=" + type + ")", null);
             }
         }
         catch (Exception e) {
-            ChatResponse.Qa errorQa = new ChatResponse.Qa("error", null, "JSON 파싱 오류: " + e.getMessage());
-            return ChatResponse.Chat.from("error", errorQa, null);
+            return ChatResponse.Chat.from("error", "JSON 파싱 오류: " + e.getMessage(), null);
         }
     }
 }
