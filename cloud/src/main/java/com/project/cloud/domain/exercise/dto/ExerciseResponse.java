@@ -8,17 +8,23 @@ public class ExerciseResponse {
     public record Detail(
             Long exerciseId,
             String name,
+            Target target,
+            Integer baseWeight,
+            String type,
+            String level,
             String imageUrl,
-            String link,
-            Target target
+            String link
     ) {
         public static Detail from(Exercise exercise) {
             return new Detail(
                     exercise.getId(),
                     exercise.getName(),
+                    exercise.getTarget(),
+                    exercise.getBaseWeight(),
+                    exercise.getType(),
+                    exercise.getLevel(),
                     exercise.getImage(),
-                    exercise.getLink(),
-                    exercise.getTarget()
+                    exercise.getLink()
             );
         }
     }
