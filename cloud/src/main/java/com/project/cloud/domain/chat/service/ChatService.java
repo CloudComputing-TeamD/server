@@ -96,7 +96,6 @@ public class ChatService {
 
                 String level              = root.path("level").asText(null);
                 String goal               = root.path("goal").asText(null);
-                Integer frequencyPerWeek  = root.path("frequency_per_week").asInt();
 
                 // "routine" 오브젝트 내부 파싱
                 JsonNode routineNode = root.path("routine");
