@@ -22,7 +22,8 @@ public class SecurityConfig {
             "/v3/api-docs/**",
             "/",
             "/oauth2/**",
-            "/login/**"
+            "/login/**",
+            "/api/me"
     };
 
     private final AuthFacadeService oAuth2UserService;
