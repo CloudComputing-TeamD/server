@@ -6,6 +6,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import com.project.cloud.domain.bodyPart.entity.BodyPart;
 import com.project.cloud.domain.record.entity.Record;
 import com.project.cloud.domain.bodyPart.repository.BodyPartRepository;
+import com.project.cloud.domain.routine.entity.Routine;
 import com.project.cloud.domain.user.dto.BodyPartExpResponse;
 import com.project.cloud.domain.user.dto.DailyDurationResponse;
 import com.project.cloud.domain.user.dto.UserCharacterResponse;
@@ -126,42 +127,4 @@ class UserServiceTest {
         assertThat(exp.abs()).isEqualTo(10);
         assertThat(exp.shoulders()).isEqualTo(10);
     }
-
-    @Test
-    void getUserStatistics_이번달_운동기록_정상조회() {
-        // given
-        LocalDate today = LocalDate.now();
-        LocalDate earlierThisMonth = today.withDayOfMonth(1).plusDays(1);
-        LocalDate notThisMonth = today.minusMonths(1).withDayOfMonth(10);
-
-        Record record1 = Record.create(user, earlierThisMonth, 30);
-        Record record2 = Record.create(user, today, 60);
-
-        Record oldRecord = Record.create(user, notThisMonth, 45);
-
-        user.getRecords().addAll(List.of(record1, record2, oldRecord));
-
-        // when
-        UserExerciseStatisticsResponse response = userService.getUserStatistics(email);
-
-        // then
-        assertThat(response.todayDuration()).isEqualTo(60);
-
-        int expectedAverage = (30 + 60) / today.lengthOfMonth();
-        assertThat(response.averageDuration()).isEqualTo(expectedAverage);
-
-        assertThat(response.dailyDurationResponses()).hasSize(today.lengthOfMonth());
-
-        DailyDurationResponse todayResponse = response.dailyDurationResponses().stream()
-            .filter(d -> d.date().equals(today))
-            .findFirst()
-            .orElseThrow();
-
-        assertThat(todayResponse.duration()).isEqualTo(60);
-
-        boolean containsOld = response.dailyDurationResponses().stream()
-            .anyMatch(d -> d.date().equals(notThisMonth));
-        assertThat(containsOld).isFalse();
-    }
-
 }

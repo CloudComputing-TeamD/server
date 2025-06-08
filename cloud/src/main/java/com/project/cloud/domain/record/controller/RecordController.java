@@ -24,7 +24,6 @@ public class RecordController {
             @RequestParam int totalTime,
             @LoginUser String email) {
 
-
         RecordResponse response = recordService.createRecord(routineId, totalTime, email);
         return SuccessResponse.ok(response);
     }
