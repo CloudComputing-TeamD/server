@@ -2,6 +2,7 @@ package com.project.cloud.domain.user.service;
 
 import com.project.cloud.domain.bodyPart.entity.BodyPart;
 import com.project.cloud.domain.bodyPart.repository.BodyPartRepository;
+import com.project.cloud.domain.exercise.enumerate.Target;
 import com.project.cloud.domain.record.entity.Record;
 import com.project.cloud.domain.user.dto.BodyPartExpResponse;
 import com.project.cloud.domain.user.dto.DailyDurationResponse;
@@ -90,21 +91,20 @@ public class UserService {
             makeBodyPartResponse(user.getBodyPartStats()));
     }
 
-    // TODO : bodyPart Enum 작성 필요
     private BodyPartExpResponse makeBodyPartResponse(List<UserBodyPart> bodyParts) {
         return new BodyPartExpResponse(
-            findBodyPartExpByName(bodyParts, "chest"),
-            findBodyPartExpByName(bodyParts, "back"),
-            findBodyPartExpByName(bodyParts, "legs"),
-            findBodyPartExpByName(bodyParts, "abs"),
-            findBodyPartExpByName(bodyParts, "shoulders")
+            findBodyPartExpByName(bodyParts, Target.CHEST),
+            findBodyPartExpByName(bodyParts, Target.BACK),
+            findBodyPartExpByName(bodyParts, Target.LEGS),
+            findBodyPartExpByName(bodyParts, Target.CORE),
+            findBodyPartExpByName(bodyParts, Target.SHOULDERS)
         );
     }
 
-    // TODO : N+1 없애기
-    private int findBodyPartExpByName(List<UserBodyPart> bodyParts, String partName) {
+    private int findBodyPartExpByName(List<UserBodyPart> bodyParts, Target target
+    ) {
         Optional<UserBodyPart> part = bodyParts.stream()
-            .filter(userBodyPart -> userBodyPart.getBodyPart().getName().equals(partName))
+            .filter(userBodyPart -> userBodyPart.getBodyPart().getName().equals(target.name()))
             .findFirst();
         if (part.isEmpty()) {
             throw new CustomException(ErrorCode.BODYPART_NOT_FOUND);

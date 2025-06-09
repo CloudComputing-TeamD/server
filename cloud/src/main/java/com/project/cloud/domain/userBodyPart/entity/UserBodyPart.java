@@ -45,4 +45,8 @@ public class UserBodyPart {
     public static UserBodyPart create(User user, BodyPart bodyPart, int exp) {
         return new UserBodyPart(user, bodyPart, exp);
     }
+
+    public void saveExperience(int exp){
+        this.exp += exp;
+    }
 }

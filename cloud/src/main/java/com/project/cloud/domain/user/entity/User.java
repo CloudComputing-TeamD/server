@@ -122,4 +122,14 @@ public class User extends BaseEntity {
         this.bodyPartStats.clear();
         this.bodyPartStats.addAll(parts);
     }
+
+    public void saveExperience(int exp) {
+        while (this.exp >= 300 && this.level < 5) {
+            this.level++;
+            this.exp -= 300;
+        }
+        if (this.level == 5) {
+            this.exp = 0;
+        }
+    }
 }
