@@ -54,7 +54,7 @@ public class ChatService {
         userData.put("level", user.getWorkoutLevel().name().toLowerCase());
         userData.put("gender", user.getGender().name());
         userData.put("weight", user.getWeight());
-        userData.put("top_k", 3);
+        userData.put("top_k", 5);
 
         body.put("userData", userData);
 
